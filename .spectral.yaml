@@ -1,0 +1,35 @@
+extends: ["spectral:oas"]
+functions: [abc]
+rules:
+  no-$ref-siblings: warn
+  server-urls-lenght:
+    description: lunghezza path eccessiva.
+    severity: warn
+    given: $.paths[*]~
+    then:
+      field: url
+      function: length
+      functionOptions:
+        max: 5
+  tag-description:
+    description: Please provide  externalDocs for each tag.
+    given: $.tags[*]
+    severity: error
+    then:
+      field: externalDocs
+      function: truthy
+  ensure-paths-kebab-case:
+    description: Paths should be in kebab-case.
+    message: '{{description}} (lower case and separated with hyphens)'
+    severity: error
+    given: $.paths[*]~
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(\/|[a-z0-9-.]+|{[a-zA-Z0-9]+})+$"
+  my-rule:
+    message: "{{error}}"
+    given: $..parameters
+    severity: warn
+    then:
+      function: "onlystring"
